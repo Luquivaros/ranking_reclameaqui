@@ -1,0 +1,6 @@
+{
+  "name": "Ranking Reclame Aqui do grupo UOP",
+  "description": "Ranking Reclame Aqui do grupo UOP com notas, classificação no pódio e gestão de empresas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
