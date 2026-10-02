@@ -11,6 +11,7 @@ import {
   Trash2,
   CheckCircle2,
   Building2,
+  Loader2,
 } from "lucide-react"
 import { Company } from "./types"
 import { INITIAL_COMPANIES } from "./data/initialCompanies"
@@ -25,25 +26,53 @@ import type { LeaderboardRanking as LeaderboardPodiumRanking } from "@/component
 import type { LeaderboardRankingItem } from "@/components/ui/leaderboard-rankings"
 import { CompanyModal } from "./components/CompanyModal"
 import { DeleteConfirmModal } from "./components/DeleteConfirmModal"
+import { supabase } from "./lib/supabase"
 
-const STORAGE_KEY = "reclame_aqui_leaderboard_v5_uop_ra1000"
+// ── Helpers de conversão snake_case ↔ camelCase ──────────────────────────────
+function toDbRow(c: Company): Record<string, unknown> {
+  return {
+    id: c.id,
+    name: c.name,
+    handle: c.handle,
+    score: c.score,
+    is_unrated: c.isUnrated,
+    avatar_url: c.avatarUrl,
+    initials: c.initials ?? null,
+    avatar_bg: c.avatarBg ?? null,
+    status_type: c.statusType ?? null,
+    solution_rate: c.solutionRate ?? null,
+    ra_status: c.raStatus ?? null,
+    complaints_count: c.complaintsCount ?? null,
+    category: c.category ?? null,
+    created_at: c.createdAt,
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fromDbRow(row: any): Company {
+  return {
+    id: row.id,
+    name: row.name,
+    handle: row.handle,
+    score: row.score !== null ? Number(row.score) : null,
+    isUnrated: row.is_unrated,
+    avatarUrl: row.avatar_url ?? "",
+    initials: row.initials ?? undefined,
+    avatarBg: row.avatar_bg ?? undefined,
+    statusType: row.status_type ?? undefined,
+    solutionRate: row.solution_rate !== null ? Number(row.solution_rate) : undefined,
+    raStatus: row.ra_status ?? undefined,
+    complaintsCount: row.complaints_count ?? undefined,
+    category: row.category ?? undefined,
+    createdAt: Number(row.created_at),
+  }
+}
 
 export default function App() {
-  // Companies state with persistent localStorage
-  const [companies, setCompanies] = useState<Company[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed
-        }
-      }
-    } catch (e) {
-      console.error("Failed to parse saved companies from localStorage", e)
-    }
-    return INITIAL_COMPANIES
-  })
+  // Companies state – source of truth is Supabase
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [dbError, setDbError] = useState<string | null>(null)
 
   // Search
   const [searchQuery, setSearchQuery] = useState("")
@@ -56,14 +85,40 @@ export default function App() {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
-  // Save to localStorage
+  // ── Carregar empresas do Supabase na montagem ────────────────────────────
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(companies))
-    } catch (e) {
-      console.error("Failed to save to localStorage", e)
+    async function fetchCompanies() {
+      setIsLoading(true)
+      setDbError(null)
+      try {
+        const { data, error } = await supabase
+          .from('companies')
+          .select('*')
+          .order('created_at', { ascending: true })
+
+        if (error) throw error
+
+        if (data && data.length > 0) {
+          setCompanies(data.map(fromDbRow))
+        } else {
+          // Banco vazio → popular com dados iniciais
+          const rows = INITIAL_COMPANIES.map(toDbRow)
+          const { error: insertError } = await supabase
+            .from('companies')
+            .insert(rows)
+          if (insertError) throw insertError
+          setCompanies(INITIAL_COMPANIES)
+        }
+      } catch (err) {
+        console.error('Erro ao carregar empresas:', err)
+        setDbError('Não foi possível conectar ao banco de dados.')
+        setCompanies(INITIAL_COMPANIES) // fallback local
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [companies])
+    fetchCompanies()
+  }, [])
 
   // Toast auto-hide
   useEffect(() => {
@@ -142,23 +197,25 @@ export default function App() {
     })
   }, [filteredCompanies, sortedCompanies, selectedCompany])
 
-  // CRUD Handlers
-  const handleSaveCompany = (data: Partial<Company>) => {
+  // ── CRUD Handlers (com sync Supabase) ───────────────────────────────────
+  const handleSaveCompany = async (data: Partial<Company>) => {
     if (editingCompany) {
-      // Edit existing
-      setCompanies((prev) =>
-        prev.map((c) =>
-          c.id === editingCompany.id
-            ? {
-                ...c,
-                ...data,
-              }
-            : c
-        )
-      )
-      setToastMessage(`Empresa "${data.name}" atualizada com sucesso!`)
+      // Atualizar empresa existente
+      const updated: Company = { ...editingCompany, ...data }
+      const { error } = await supabase
+        .from('companies')
+        .update(toDbRow(updated))
+        .eq('id', editingCompany.id)
+
+      if (error) {
+        console.error('Erro ao atualizar empresa:', error)
+        setToastMessage('❌ Erro ao atualizar empresa no banco.')
+      } else {
+        setCompanies((prev) => prev.map((c) => c.id === editingCompany.id ? updated : c))
+        setToastMessage(`Empresa "${updated.name}" atualizada com sucesso!`)
+      }
     } else {
-      // Add new
+      // Adicionar nova empresa
       const newCompany: Company = {
         id: `comp-${Date.now()}`,
         name: data.name || "Nova Empresa",
@@ -174,29 +231,57 @@ export default function App() {
         createdAt: Date.now(),
         raStatus: data.raStatus || (data.score !== null ? "Bom" : "Sem Reputação"),
       }
-      setCompanies((prev) => [newCompany, ...prev])
-      setToastMessage(`Empresa "${newCompany.name}" adicionada ao ranking!`)
+
+      const { error } = await supabase
+        .from('companies')
+        .insert(toDbRow(newCompany))
+
+      if (error) {
+        console.error('Erro ao inserir empresa:', error)
+        setToastMessage('❌ Erro ao adicionar empresa no banco.')
+      } else {
+        setCompanies((prev) => [newCompany, ...prev])
+        setToastMessage(`Empresa "${newCompany.name}" adicionada ao ranking!`)
+      }
     }
     setModalOpen(false)
     setEditingCompany(null)
   }
 
-  const handleDeleteCompany = () => {
+  const handleDeleteCompany = async () => {
     if (!deletingCompany) return
     const name = deletingCompany.name
-    setCompanies((prev) => prev.filter((c) => c.id !== deletingCompany.id))
-    if (selectedCompany?.id === deletingCompany.id) {
-      setSelectedCompany(null)
+
+    const { error } = await supabase
+      .from('companies')
+      .delete()
+      .eq('id', deletingCompany.id)
+
+    if (error) {
+      console.error('Erro ao deletar empresa:', error)
+      setToastMessage('❌ Erro ao remover empresa do banco.')
+    } else {
+      setCompanies((prev) => prev.filter((c) => c.id !== deletingCompany.id))
+      if (selectedCompany?.id === deletingCompany.id) setSelectedCompany(null)
+      setToastMessage(`Empresa "${name}" removida com sucesso.`)
     }
     setDeletingCompany(null)
-    setToastMessage(`Empresa "${name}" removida com sucesso.`)
   }
 
-  const handleResetData = () => {
-    if (window.confirm("Deseja restaurar as 34 empresas da lista com as notas fornecidas?")) {
-      setCompanies(INITIAL_COMPANIES)
-      setSelectedCompany(null)
-      setToastMessage("34 empresas restauradas com sucesso!")
+  const handleResetData = async () => {
+    if (window.confirm("Deseja restaurar as 34 empresas da lista com as notas fornecidas? Isso apagará todos os dados atuais.")) {
+      // Deletar tudo e reinserir
+      await supabase.from('companies').delete().neq('id', '')
+      const rows = INITIAL_COMPANIES.map(toDbRow)
+      const { error } = await supabase.from('companies').insert(rows)
+      if (error) {
+        console.error('Erro ao restaurar empresas:', error)
+        setToastMessage('❌ Erro ao restaurar empresas no banco.')
+      } else {
+        setCompanies(INITIAL_COMPANIES)
+        setSelectedCompany(null)
+        setToastMessage("34 empresas restauradas com sucesso!")
+      }
     }
   }
 
@@ -207,9 +292,26 @@ export default function App() {
     }
   }
 
+  // ── Tela de carregamento ─────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#f4f5f7] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 text-slate-600 animate-spin" />
+        <p className="text-sm text-slate-500 font-medium">Carregando empresas...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#f4f5f7] py-6 px-3 sm:px-6 font-sans text-slate-900 flex flex-col justify-between">
       {/* Top Header & Quick Actions */}
+      {/* Banner de erro de conexão */}
+      {dbError && (
+        <div className="max-w-lg mx-auto w-full mb-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl px-4 py-2.5 flex items-center gap-2">
+          <span>⚠️</span><span>{dbError} Usando dados locais como fallback.</span>
+        </div>
+      )}
+
       <header className="max-w-lg mx-auto w-full mb-4">
         <div className="flex items-center justify-between gap-2 bg-white/95 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-2.5 px-3.5 shadow-xs">
           {/* Brand Info */}
