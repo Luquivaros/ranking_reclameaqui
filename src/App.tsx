@@ -403,27 +403,27 @@ export default function App() {
 
       {/* Selected Company Action Card / Quick Inspection */}
       {selectedCompany && (
-        <div className="fixed inset-x-0 bottom-4 max-w-lg mx-auto px-4 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out">
-          <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-xl border border-slate-800 flex items-center justify-between gap-3 transition-all duration-300 ease-out">
+        <div className="fixed inset-x-0 bottom-4 max-w-lg mx-auto px-4 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out xl:inset-x-auto xl:bottom-auto xl:top-1/2 xl:-translate-y-1/2 xl:right-8 xl:left-auto xl:mx-0 xl:px-0 xl:w-80 xl:max-w-none">
+          <div className="bg-white text-slate-900 rounded-2xl p-4 shadow-xs border border-slate-200 flex items-center justify-between gap-3 transition-all duration-300 ease-out">
             <div className="flex items-center gap-3 min-w-0">
               {/* Initials Avatar */}
               <div
                 className={`w-11 h-11 rounded-full flex items-center justify-center font-extrabold text-sm tracking-tight border flex-shrink-0 transition-transform duration-400 ease-out hover:scale-105 ${
-                  selectedCompany.avatarBg || "bg-slate-800 text-white border-slate-700"
+                  selectedCompany.avatarBg || "bg-slate-100 text-slate-700 border-slate-200"
                 }`}
               >
                 {selectedCompany.initials}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <h4 className="text-xs font-bold text-white truncate">
+                  <h4 className="text-xs font-bold text-slate-900 truncate">
                     {selectedCompany.name}
                   </h4>
-                  <span className="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 font-semibold flex-shrink-0">
+                  <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold flex-shrink-0">
                     {selectedCompany.score !== null ? (selectedCompany.score >= 10 ? "RA1000" : `Nota ${selectedCompany.score.toFixed(1)}`) : formatScore(selectedCompany)}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 truncate">
+                <p className="text-[11px] text-slate-500 truncate">
                   {selectedCompany.category || "Geral"} • {selectedCompany.raStatus}
                 </p>
               </div>
@@ -435,21 +435,21 @@ export default function App() {
                   setEditingCompany(selectedCompany)
                   setModalOpen(true)
                 }}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all duration-300 ease-out cursor-pointer"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all duration-300 ease-out cursor-pointer"
                 title="Editar esta empresa"
               >
                 <Edit3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setDeletingCompany(selectedCompany)}
-                className="p-2 rounded-xl bg-red-950/60 hover:bg-red-900/80 text-red-300 transition-all duration-300 ease-out cursor-pointer"
+                className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-all duration-300 ease-out cursor-pointer"
                 title="Excluir esta empresa"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setSelectedCompany(null)}
-                className="p-1.5 text-slate-400 hover:text-white transition-colors duration-300 ease-out cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-slate-700 transition-colors duration-300 ease-out cursor-pointer"
                 title="Fechar"
               >
                 <X className="w-4 h-4" />

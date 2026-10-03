@@ -20,10 +20,12 @@ CREATE TABLE IF NOT EXISTS companies (
 ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 
 -- Política: qualquer usuário anon pode ler
+DROP POLICY IF EXISTS "Leitura pública" ON companies;
 CREATE POLICY "Leitura pública" ON companies
   FOR SELECT USING (true);
 
 -- Política: qualquer usuário anon pode inserir, atualizar e deletar
 -- (para uso sem autenticação; remova e use auth se precisar de controle de acesso)
+DROP POLICY IF EXISTS "Escrita pública" ON companies;
 CREATE POLICY "Escrita pública" ON companies
   FOR ALL USING (true) WITH CHECK (true);
