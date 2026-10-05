@@ -84,11 +84,14 @@ export const CompanyModal: React.FC<CompanyModalProps> = ({
     const isScoreStatus = statusType === 'score';
     const finalScore = isScoreStatus ? Number(Number(score).toFixed(1)) : null;
 
+    const isCustomAvatar =
+      Boolean(initialData?.avatarUrl && !initialData.avatarUrl.startsWith('data:image/svg'));
+
     const companyData: Partial<Company> = {
       name: name.trim(),
       initials,
-      avatarBg: palette.bg,
-      avatarUrl: svgDataUrl,
+      avatarBg: isCustomAvatar ? (initialData?.avatarBg || 'bg-white text-slate-800 border-slate-200') : palette.bg,
+      avatarUrl: isCustomAvatar ? initialData!.avatarUrl : svgDataUrl,
       handle: handle.trim()
         ? (handle.startsWith('@') ? handle.trim() : `@${handle.trim()}`)
         : `@${name.toLowerCase().replace(/[^a-z0-9]/g, '')}`,

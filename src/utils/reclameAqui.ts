@@ -113,24 +113,32 @@ export function getReputationBadgeDetails(status: ReclameAquiReputation) {
 
 /**
  * Priority order for sorting:
- * 1. Score (descending from 10.0 to 0.0)
- * 2. 'Não Recomendada' (evaluated but bad reputation)
+ * 1. Score (descending from 10.0 to 0.0) -> ANY company with a valid numeric score!
+ * 2. 'Não Recomendada' (evaluated but bad reputation, without numerical score)
  * 3. 'Sem Reputação' (registered on Reclame Aqui but not enough reviews)
  * 4. 'Não está no Reclame Aqui' (not listed on Reclame Aqui)
  */
-function getStatusTier(company: Company): number {
+export function getStatusTier(company: Company): number {
   if (company.raStatus === 'Não está no Reclame Aqui' || company.statusType === 'nao_cadastrada') {
     return 4;
   }
   if (company.raStatus === 'Sem Reputação' || company.statusType === 'sem_reputacao') {
     return 3;
   }
+
+  // Se a empresa possui uma nota numérica válida, ela SEMPRE entra no Tier 1 (ranking por nota)
+  const numScore =
+    company.score !== null && company.score !== undefined ? Number(company.score) : null;
+  const hasValidScore = numScore !== null && !isNaN(numScore) && !company.isUnrated;
+
+  if (hasValidScore) {
+    return 1;
+  }
+
   if (company.raStatus === 'Não Recomendada' || company.statusType === 'nao_recomendada') {
     return 2;
   }
-  if (company.score !== null && !company.isUnrated) {
-    return 1;
-  }
+
   return 3; // fallback unrated
 }
 
@@ -143,22 +151,32 @@ export function sortCompaniesByRanking(companies: Company[]): Company[] {
       return tierA - tierB;
     }
 
-    // Both are tier 1 (have scores)
-    if (tierA === 1) {
-      const scoreA = a.score ?? 0;
-      const scoreB = b.score ?? 0;
-      if (scoreB !== scoreA) {
-        return scoreB - scoreA;
-      }
-      // Tie-breaker: solution rate
-      const rateA = a.solutionRate ?? 0;
-      const rateB = b.solutionRate ?? 0;
-      if (rateB !== rateA) {
-        return rateB - rateA;
-      }
+    // Se ambos possuem nota numérica válida, ordenar pela nota de forma decrescente (10.0 -> 0.0)
+    const numScoreA =
+      a.score !== null && a.score !== undefined && !a.isUnrated ? Number(a.score) : null;
+    const numScoreB =
+      b.score !== null && b.score !== undefined && !b.isUnrated ? Number(b.score) : null;
+    const scoreA = numScoreA !== null && !isNaN(numScoreA) ? numScoreA : null;
+    const scoreB = numScoreB !== null && !isNaN(numScoreB) ? numScoreB : null;
+
+    if (scoreA !== null && scoreB !== null && scoreB !== scoreA) {
+      return scoreB - scoreA;
+    }
+    if (scoreA !== null && scoreB === null) {
+      return -1;
+    }
+    if (scoreA === null && scoreB !== null) {
+      return 1;
     }
 
-    // Default alphabetical tie-breaker
+    // Critério de desempate secundário: taxa de solução (solution rate) decrescente
+    const numRateA = typeof a.solutionRate === 'number' && !isNaN(a.solutionRate) ? a.solutionRate : -1;
+    const numRateB = typeof b.solutionRate === 'number' && !isNaN(b.solutionRate) ? b.solutionRate : -1;
+    if (numRateB !== numRateA) {
+      return numRateB - numRateA;
+    }
+
+    // Critério de desempate final: ordem alfabética
     return a.name.localeCompare(b.name, 'pt-BR');
   });
 }
@@ -170,14 +188,19 @@ export function formatScore(company: Company): string {
   if (company.raStatus === 'Sem Reputação' || company.statusType === 'sem_reputacao') {
     return 'Sem Reputação';
   }
-  if (company.raStatus === 'Não Recomendada' || company.statusType === 'nao_recomendada') {
-    return 'Não Recomendada';
-  }
-  if (company.score !== null && !company.isUnrated) {
-    if (company.score >= 10) {
+
+  // Verifica nota antes de avaliar rótulos textuais
+  const numScore =
+    company.score !== null && company.score !== undefined ? Number(company.score) : null;
+  if (numScore !== null && !isNaN(numScore) && !company.isUnrated) {
+    if (numScore >= 10) {
       return 'RA1000';
     }
-    return company.score.toFixed(1);
+    return numScore.toFixed(1);
+  }
+
+  if (company.raStatus === 'Não Recomendada' || company.statusType === 'nao_recomendada') {
+    return 'Não Recomendada';
   }
   return 'Sem Avaliação';
 }

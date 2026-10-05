@@ -28,6 +28,16 @@ import { CompanyModal } from "./components/CompanyModal"
 import { DeleteConfirmModal } from "./components/DeleteConfirmModal"
 import { supabase } from "./lib/supabase"
 
+// Mapeamento de logos oficiais para empresas (especialmente do pódio)
+export const OFFICIAL_COMPANY_LOGOS: Record<string, string> = {
+  'comp-1': '/image/novare.webp',
+  'comp-3': '/image/platino.webp',
+  'comp-7': '/image/nexus.webp',
+  'Novare Assessoria Administrativa': '/image/novare.webp',
+  'Platino Soluções': '/image/platino.webp',
+  'Nexus Soluções Financeiras': '/image/nexus.webp',
+}
+
 // ── Helpers de conversão snake_case ↔ camelCase ──────────────────────────────
 function toDbRow(c: Company): Record<string, unknown> {
   return {
@@ -50,17 +60,35 @@ function toDbRow(c: Company): Record<string, unknown> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function fromDbRow(row: any): Company {
+  const officialLogo =
+    OFFICIAL_COMPANY_LOGOS[row.id] ||
+    OFFICIAL_COMPANY_LOGOS[row.name] ||
+    (row.avatar_url && !row.avatar_url.startsWith('data:image/svg') ? row.avatar_url : undefined)
+
+  const parsedScore =
+    row.score !== null && row.score !== undefined
+      ? Number(String(row.score).replace(',', '.'))
+      : null
+  const validScore = parsedScore !== null && !isNaN(parsedScore) ? parsedScore : null
+
+  const parsedSolutionRate =
+    row.solution_rate !== null && row.solution_rate !== undefined
+      ? Number(String(row.solution_rate).replace(',', '.'))
+      : undefined
+  const validSolutionRate =
+    parsedSolutionRate !== undefined && !isNaN(parsedSolutionRate) ? parsedSolutionRate : undefined
+
   return {
     id: row.id,
     name: row.name,
     handle: row.handle,
-    score: row.score !== null ? Number(row.score) : null,
-    isUnrated: row.is_unrated,
-    avatarUrl: row.avatar_url ?? "",
+    score: validScore,
+    isUnrated: row.is_unrated ?? (validScore === null),
+    avatarUrl: officialLogo || row.avatar_url || "",
     initials: row.initials ?? undefined,
-    avatarBg: row.avatar_bg ?? undefined,
+    avatarBg: officialLogo ? 'bg-white text-slate-800 border-slate-200' : (row.avatar_bg ?? undefined),
     statusType: row.status_type ?? undefined,
-    solutionRate: row.solution_rate !== null ? Number(row.solution_rate) : undefined,
+    solutionRate: validSolutionRate,
     raStatus: row.ra_status ?? undefined,
     complaintsCount: row.complaints_count ?? undefined,
     category: row.category ?? undefined,
@@ -150,16 +178,23 @@ export default function App() {
 
   // Map to LeaderboardPodium format (Top 3 of sorted companies)
   const podiumRankings: LeaderboardPodiumRanking[] = useMemo(() => {
-    return sortedCompanies.slice(0, 3).map((comp, idx) => ({
-      id: comp.id,
-      rank: idx + 1,
-      name: comp.name.length > 15 ? `${comp.name.substring(0, 14)}...` : comp.name,
-      value: comp.score !== null ? (comp.score >= 10 ? "RA1000 ★" : `${comp.score.toFixed(1)} ★`) : formatScore(comp),
-      avatar: comp.avatarUrl,
-      initials: comp.initials,
-      avatarBg: comp.avatarBg,
-      badge: comp.score !== null && comp.score >= 10 ? "RA1000" : comp.raStatus,
-    }))
+    return sortedCompanies.slice(0, 3).map((comp, idx) => {
+      const officialLogo =
+        OFFICIAL_COMPANY_LOGOS[comp.id] ||
+        OFFICIAL_COMPANY_LOGOS[comp.name] ||
+        (comp.avatarUrl && !comp.avatarUrl.startsWith('data:image/svg') ? comp.avatarUrl : undefined)
+
+      return {
+        id: comp.id,
+        rank: idx + 1,
+        name: comp.name.length > 15 ? `${comp.name.substring(0, 14)}...` : comp.name,
+        value: comp.score !== null ? (comp.score >= 10 ? "RA1000 ★" : `${comp.score.toFixed(1)} ★`) : formatScore(comp),
+        avatar: officialLogo || comp.avatarUrl,
+        initials: comp.initials,
+        avatarBg: officialLogo ? 'bg-white text-slate-800 border-slate-200' : comp.avatarBg,
+        badge: comp.score !== null && comp.score >= 10 ? "RA1000" : comp.raStatus,
+      }
+    })
   }, [sortedCompanies])
 
   // Map to LeaderboardRankings format
@@ -182,15 +217,20 @@ export default function App() {
         bylineText = `${reputation} • ${comp.solutionRate ?? 85}% taxa de solução`
       }
 
+      const officialLogo =
+        OFFICIAL_COMPANY_LOGOS[comp.id] ||
+        OFFICIAL_COMPANY_LOGOS[comp.name] ||
+        (comp.avatarUrl && !comp.avatarUrl.startsWith('data:image/svg') ? comp.avatarUrl : undefined)
+
       return {
         id: comp.id,
         rank: overallRank,
         name: comp.name,
         byline: bylineText,
         value: comp.score !== null ? (comp.score >= 10 ? "RA1000" : comp.score.toFixed(1)) : scoreFormatted,
-        avatar: comp.avatarUrl,
+        avatar: officialLogo || comp.avatarUrl,
         initials: comp.initials,
-        avatarBg: comp.avatarBg,
+        avatarBg: officialLogo ? 'bg-white text-slate-800 border-slate-200' : comp.avatarBg,
         isCurrent: selectedCompany?.id === comp.id,
         meta: comp,
       }

@@ -14,6 +14,8 @@ interface RawCompanyData {
   category?: string;
   handle?: string;
   solutionRate?: number;
+  avatarUrl?: string;
+  avatarBg?: string;
 }
 
 const RAW_COMPANIES: RawCompanyData[] = [
@@ -25,6 +27,8 @@ const RAW_COMPANIES: RawCompanyData[] = [
     category: 'Assessoria Administrativa',
     handle: '@novareassessoria',
     solutionRate: 94,
+    avatarUrl: '/image/novare.webp',
+    avatarBg: 'bg-white text-slate-800 border-slate-200',
   },
   {
     name: 'Rocket Mediações',
@@ -43,6 +47,8 @@ const RAW_COMPANIES: RawCompanyData[] = [
     category: 'Soluções Financeiras',
     handle: '@platinosolucoes',
     solutionRate: 88,
+    avatarUrl: '/image/platino.webp',
+    avatarBg: 'bg-white text-slate-800 border-slate-200',
   },
   {
     name: 'Zenith Financeira',
@@ -79,6 +85,8 @@ const RAW_COMPANIES: RawCompanyData[] = [
     category: 'Soluções Financeiras',
     handle: '@nexussolucoes',
     solutionRate: 83,
+    avatarUrl: '/image/nexus.webp',
+    avatarBg: 'bg-white text-slate-800 border-slate-200',
   },
   {
     name: 'Fly Mediações Financeiras',
@@ -328,8 +336,8 @@ export const INITIAL_COMPANIES: Company[] = RAW_COMPANIES.map((item, index) => {
     raStatus: item.raStatus,
     isUnrated: item.score === null,
     initials,
-    avatarBg: palette.bg,
-    avatarUrl: svgDataUrl,
+    avatarBg: item.avatarBg || palette.bg,
+    avatarUrl: item.avatarUrl || svgDataUrl,
     solutionRate: item.solutionRate,
     category: item.category || 'Geral',
     createdAt: Date.now() - index * 60000,
