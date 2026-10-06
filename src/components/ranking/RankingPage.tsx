@@ -4,7 +4,6 @@ import * as React from "react"
 import { useState, useMemo, useEffect } from "react"
 import {
   Plus,
-  RotateCcw,
   X,
   Edit3,
   Trash2,
@@ -328,18 +327,6 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
 
   return (
     <div className="min-h-screen bg-[#f4f5f7] py-6 px-3 sm:px-6 font-sans text-slate-900 flex flex-col justify-between">
-      {/* Botão de retorno à tela inicial (apenas seta) */}
-      <div className="max-w-lg mx-auto w-full mb-3 flex items-center justify-start animate-fade-in-down">
-        <button
-          onClick={onNavigateToReport}
-          className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-black hover:bg-slate-50 shadow-2xs transition-all cursor-pointer group"
-          title="Voltar para a tela inicial"
-          aria-label="Voltar para a tela inicial"
-        >
-          <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
-        </button>
-      </div>
-
       {/* Banner de erro de conexão */}
       {dbError && (
         <div className="max-w-lg mx-auto w-full mb-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl px-4 py-2.5 flex items-center gap-2">
@@ -347,7 +334,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
         </div>
       )}
 
-      <header className="max-w-lg mx-auto w-full mb-4 animate-fade-in-down stagger-1">
+      <header className="max-w-lg mx-auto w-full mb-4 animate-fade-in-down">
         <div className="flex items-center justify-between gap-2 bg-white/95 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-2.5 px-3.5 shadow-xs">
           {/* Brand Info */}
           <div className="flex items-center gap-2.5">
@@ -379,11 +366,12 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
             </button>
 
             <button
-              onClick={handleResetData}
-              className="p-1.5 text-slate-500 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 hover:border-slate-300 rounded-xl transition-all duration-300 ease-out cursor-pointer"
-              title="Restaurar lista original com as 34 empresas"
+              onClick={onNavigateToReport}
+              className="p-1.5 text-slate-500 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-100 hover:border-slate-300 rounded-xl transition-all duration-300 ease-out cursor-pointer group"
+              title="Voltar para a tela inicial"
+              aria-label="Voltar para a tela inicial"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-3.5 h-3.5 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
