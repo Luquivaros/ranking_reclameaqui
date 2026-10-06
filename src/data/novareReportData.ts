@@ -3,7 +3,7 @@ import { ReportConfig } from '../types/report';
 export const novareReportData: ReportConfig = {
   companyId: 'novare',
   companyName: 'Novare Assessoria Administrativa',
-  reclameAquiUrl: 'https://www.reclameaqui.com.br/empresa/novare-assessoria-administrativa/',
+  reclameAquiUrl: 'https://www.reclameaqui.com.br/empresa/novare-assessoria-administrativa-ltda/',
   cnpj: '63.811.122/0001-88',
   segment: 'Assessoria Administrativa e Cobrança',
   reportDate: '30 de Setembro de 2026',

@@ -11,15 +11,15 @@ export function CompanyHubPage({ onSelectCompany, onNavigateToRanking }: Company
     <div className="min-h-screen bg-[#F8F9FA] text-slate-900 flex flex-col justify-between selection:bg-[#90B823] selection:text-black">
       {/* Top Navbar */}
       <header className="bg-white border-b border-black/[0.08] sticky top-0 z-30 animate-fade-in-down">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 sm:h-28 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
             <img
               src="/image/reclame-aqui.webp"
               alt="Reclame AQUI"
-              className="h-10 sm:h-14 w-auto object-contain select-none"
+              className="h-14 sm:h-18 md:h-20 w-auto object-contain select-none"
             />
-            <span className="hidden sm:inline-block text-xs sm:text-sm text-black/60 font-medium pl-3 border-l border-black/20">
-              Portal Corporativo de Monitoramento
+            <span className="hidden sm:inline-block text-xs sm:text-sm text-black/70 font-semibold pl-4 border-l border-black/20">
+              Relatório do Reclame Aqui
             </span>
           </div>
 
@@ -39,7 +39,7 @@ export function CompanyHubPage({ onSelectCompany, onNavigateToRanking }: Company
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-10 sm:mb-14 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#007636]/10 border border-[#007636]/20 text-[#007636] text-xs font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Central de Inteligência de Atendimento</span>
+            <span>Reclame Aqui</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-black tracking-tight leading-tight">
             Selecione a Empresa para Acesso

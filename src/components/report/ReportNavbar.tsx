@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, ExternalLink, ArrowLeftRight } from 'lucide-react';
+import { Menu, X, ExternalLink, LogOut } from 'lucide-react';
 import { ReportConfig } from '../../types/report';
 
 interface ReportNavbarProps {
@@ -13,9 +13,9 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isNovare = data.companyName.toLowerCase().includes('novare');
-  const reclameAquiUrl = data.reclameAquiUrl || (isNovare
-    ? 'https://www.reclameaqui.com.br/empresa/novare-assessoria-administrativa/'
-    : 'https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/');
+  const reclameAquiUrl = isNovare
+    ? 'https://www.reclameaqui.com.br/empresa/novare-assessoria-administrativa-ltda/'
+    : (data.reclameAquiUrl || 'https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/');
 
   const navLinks = [
     { id: 'visao-geral', label: 'Visão Geral' },
@@ -80,16 +80,6 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
             Ranking
           </button>
 
-          {/* Botão para trocar de empresa */}
-          <button
-            onClick={onNavigateToHub}
-            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer text-slate-700 bg-slate-100 hover:bg-slate-200 ml-0.5"
-            title="Voltar para a tela de seleção de empresa"
-          >
-            <ArrowLeftRight className="w-3 h-3 text-slate-500" />
-            <span>Trocar Empresa</span>
-          </button>
-
           {/* Botão para redirecionar para a página da empresa no Reclame AQUI */}
           <a
             href={reclameAquiUrl}
@@ -102,6 +92,16 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
             <span>Reclame AQUI</span>
             <ExternalLink className="w-3.5 h-3.5 opacity-90 shrink-0" />
           </a>
+
+          {/* Botão Log-out (somente o ícone) posicionado ao lado direito do botão Página do Reclame Aqui */}
+          <button
+            onClick={onNavigateToHub}
+            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 cursor-pointer ml-1"
+            title="Sair / Trocar Empresa"
+            aria-label="Sair / Trocar Empresa"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </nav>
 
         {/* Mobile Toggle Button */}
@@ -140,23 +140,8 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
             <span className="text-[#007636] text-xs font-mono-numbers">→</span>
           </button>
 
-          {/* Botão Trocar Empresa no Menu Mobile */}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onNavigateToHub();
-            }}
-            className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-between cursor-pointer"
-          >
-            <span className="flex items-center gap-1.5">
-              <ArrowLeftRight className="w-3.5 h-3.5 text-slate-500" />
-              <span>Trocar Empresa (Início)</span>
-            </span>
-            <span className="text-slate-400 text-xs font-mono-numbers">⟲</span>
-          </button>
-
           {/* Botão para página no Reclame AQUI no Mobile */}
-          <div className="pt-2 mt-1 border-t border-black/5">
+          <div className="pt-2 mt-1 border-t border-black/5 space-y-1">
             <a
               href={reclameAquiUrl}
               target="_blank"
@@ -169,6 +154,21 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
               </span>
               <span className="text-white/80 text-xs font-mono-numbers">↗</span>
             </a>
+
+            {/* Botão Log-out no Menu Mobile */}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onNavigateToHub();
+              }}
+              className="w-full text-left px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center justify-between cursor-pointer transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <LogOut className="w-4 h-4 text-red-600" />
+                <span>Sair / Trocar Empresa</span>
+              </span>
+              <span className="text-red-400 text-xs font-mono-numbers">⟲</span>
+            </button>
           </div>
         </div>
       )}
