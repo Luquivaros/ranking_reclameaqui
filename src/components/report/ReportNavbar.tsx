@@ -39,8 +39,8 @@ export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavba
             alt="Reclame AQUI" 
             className="h-12 sm:h-16 md:h-20 w-auto object-contain" 
           />
-          <span className="hidden sm:inline-block text-xs sm:text-sm text-black/80 font-semibold pl-3.5 border-l border-black/20">
-            Nexus Soluções Financeiras
+          <span className="hidden sm:inline-block text-xs sm:text-sm text-black/70 font-semibold pl-3.5 border-l border-black/20">
+            Painel para Análise
           </span>
         </div>
 
