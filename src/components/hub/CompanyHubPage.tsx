@@ -64,7 +64,7 @@ export function CompanyHubPage({ onSelectCompany, onNavigateToRanking }: Company
               <div className="flex items-center justify-between gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-black/[0.08] p-2 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform duration-300">
                   <img
-                    src="/image/nexus.webp"
+                    src="/image/nexus_preto.png"
                     alt="Nexus Soluções Financeiras"
                     className="w-full h-full object-contain"
                   />
@@ -141,7 +141,7 @@ export function CompanyHubPage({ onSelectCompany, onNavigateToRanking }: Company
               <div className="flex items-center justify-between gap-4">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-black/[0.08] p-2 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform duration-300">
                   <img
-                    src="/image/novare.webp"
+                    src="/image/novare_preto.png"
                     alt="Novare Assessoria Administrativa"
                     className="w-full h-full object-contain"
                   />
