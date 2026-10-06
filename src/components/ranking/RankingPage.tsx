@@ -328,14 +328,15 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
 
   return (
     <div className="min-h-screen bg-[#f4f5f7] py-6 px-3 sm:px-6 font-sans text-slate-900 flex flex-col justify-between">
-      {/* Botão de retorno ao Relatório Principal */}
+      {/* Botão de retorno à tela inicial (apenas seta) */}
       <div className="max-w-lg mx-auto w-full mb-3 flex items-center justify-start animate-fade-in-down">
         <button
           onClick={onNavigateToReport}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 text-xs font-semibold text-slate-700 hover:text-black hover:bg-slate-50 shadow-2xs transition-all cursor-pointer group"
+          className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:text-black hover:bg-slate-50 shadow-2xs transition-all cursor-pointer group"
+          title="Voltar para a tela inicial"
+          aria-label="Voltar para a tela inicial"
         >
-          <ArrowLeft className="w-3.5 h-3.5 text-slate-500 group-hover:-translate-x-0.5 transition-transform" />
-          <span>Voltar ao Relatório Principal</span>
+          <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
         </button>
       </div>
 
@@ -476,7 +477,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
           onClick={onNavigateToReport}
           className="text-[#007636] font-semibold hover:underline cursor-pointer"
         >
-          Acessar Relatório Executivo →
+          Voltar à Tela Inicial →
         </button>
       </footer>
 

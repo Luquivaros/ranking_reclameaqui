@@ -80,7 +80,7 @@ export default function App() {
   if (currentView === "ranking") {
     return (
       <RankingPage 
-        onNavigateToReport={navigateToReport} 
+        onNavigateToReport={navigateToHub} 
       />
     )
   }

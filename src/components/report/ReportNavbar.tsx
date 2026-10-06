@@ -5,11 +5,11 @@ import { ReportConfig } from '../../types/report';
 interface ReportNavbarProps {
   data: ReportConfig;
   activeSection: string;
-  onNavigateToRanking: () => void;
+  onNavigateToRanking?: () => void;
   onNavigateToHub: () => void;
 }
 
-export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavigateToHub }: ReportNavbarProps) {
+export function ReportNavbar({ data, activeSection, onNavigateToHub }: ReportNavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isNovare = data.companyName.toLowerCase().includes('novare');
@@ -71,15 +71,6 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
             );
           })}
 
-          {/* Botão Ranking ao lado e com o MESMO design que os demais botões de navegação */}
-          <button
-            id="nav-btn-ranking"
-            onClick={onNavigateToRanking}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer text-black/60 hover:text-black hover:bg-black/[0.03]"
-          >
-            Ranking
-          </button>
-
           {/* Botão para redirecionar para a página da empresa no Reclame AQUI */}
           <a
             href={reclameAquiUrl}
@@ -127,18 +118,6 @@ export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavig
               <span className="text-[#007636] text-xs font-mono-numbers">→</span>
             </button>
           ))}
-
-          {/* Botão Ranking no Menu Mobile */}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onNavigateToRanking();
-            }}
-            className="w-full text-left px-3 py-2 text-xs font-medium text-black hover:bg-black/5 rounded-lg flex items-center justify-between cursor-pointer"
-          >
-            <span>Ranking</span>
-            <span className="text-[#007636] text-xs font-mono-numbers">→</span>
-          </button>
 
           {/* Botão para página no Reclame AQUI no Mobile */}
           <div className="pt-2 mt-1 border-t border-black/5 space-y-1">

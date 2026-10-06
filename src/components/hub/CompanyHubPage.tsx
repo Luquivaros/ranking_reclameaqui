@@ -205,17 +205,6 @@ export function CompanyHubPage({ onSelectCompany, onNavigateToRanking }: Company
             </div>
           </div>
         </div>
-
-        {/* Option to View General Ranking */}
-        <div className="text-center mt-10 sm:mt-12 animate-fade-in stagger-3">
-          <button
-            onClick={onNavigateToRanking}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-black/70 hover:text-black py-2 px-4 rounded-xl hover:bg-black/[0.04] transition-colors cursor-pointer"
-          >
-            <Trophy className="w-4 h-4 text-amber-500" />
-            <span>Consultar Ranking Completo de Empresas (34 empresas) →</span>
-          </button>
-        </div>
       </main>
 
       {/* Footer */}
