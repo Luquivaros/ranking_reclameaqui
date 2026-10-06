@@ -6,13 +6,15 @@ interface SemesterEvolutionChartProps {
   data: ReportConfig;
 }
 
-type ReputationType = 'boa' | 'regular' | 'ruim' | 'nao_recomendada';
+type ReputationType = 'boa' | 'regular' | 'ruim' | 'nao_recomendada' | 'otimo' | 'sem_reputacao';
 
 const MASCOT_IMAGES: Record<ReputationType, string> = {
   ruim: '/image/ruim.png',
   nao_recomendada: '/image/nao-recomendada.png',
   regular: '/image/regular.png',
   boa: '/image/bom.png',
+  otimo: '/image/otimo.png',
+  sem_reputacao: '/image/sem-reputacao.png',
 };
 
 interface MonthDataPoint {
@@ -33,7 +35,88 @@ export function SemesterEvolutionChart({ data }: { data: ReportConfig }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedMonthId, setSelectedMonthId] = useState<string>('2026-09');
 
-  const points: MonthDataPoint[] = [
+  const isNovare = data.companyName.toLowerCase().includes('novare');
+
+  const points: MonthDataPoint[] = isNovare ? [
+    {
+      id: '2026-04',
+      monthShort: 'Abr',
+      monthFull: 'Abril / 2026',
+      reputationType: 'sem_reputacao',
+      reputationLabel: 'Sem reputação',
+      reputationColorText: 'text-slate-500',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: 'Sem reputação',
+      complaintsText: '0 reclamações recebidas',
+      x: 80,
+      y: 190,
+    },
+    {
+      id: '2026-05',
+      monthShort: 'Mai',
+      monthFull: 'Maio / 2026',
+      reputationType: 'sem_reputacao',
+      reputationLabel: 'Sem reputação',
+      reputationColorText: 'text-slate-500',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: 'Sem reputação',
+      complaintsText: '2 reclamações recebidas · 1 resolvida · 0 voltariam',
+      x: 230,
+      y: 190,
+    },
+    {
+      id: '2026-06',
+      monthShort: 'Jun',
+      monthFull: 'Junho / 2026',
+      reputationType: 'otimo',
+      reputationLabel: 'Ótimo',
+      reputationColorText: 'text-[#16A34A]',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: '8,8 / 10',
+      complaintsText: '8 reclamações recebidas · 7 resolvidas · 7 voltariam',
+      x: 390,
+      y: 65,
+    },
+    {
+      id: '2026-07',
+      monthShort: 'Jul',
+      monthFull: 'Julho / 2026',
+      reputationType: 'otimo',
+      reputationLabel: 'Ótimo',
+      reputationColorText: 'text-[#16A34A]',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: '8,8 / 10',
+      complaintsText: '3 reclamações recebidas · 2 resolvidas · 2 voltariam',
+      x: 550,
+      y: 65,
+    },
+    {
+      id: '2026-08',
+      monthShort: 'Ago',
+      monthFull: 'Agosto / 2026',
+      reputationType: 'otimo',
+      reputationLabel: 'Ótimo',
+      reputationColorText: 'text-[#16A34A]',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: '8,8 / 10',
+      complaintsText: '4 reclamações recebidas · 2 resolvidas · 2 voltariam',
+      x: 710,
+      y: 65,
+    },
+    {
+      id: '2026-09',
+      monthShort: 'Set',
+      monthFull: 'Setembro / 2026',
+      reputationType: 'otimo',
+      reputationLabel: 'Ótimo',
+      reputationColorText: 'text-[#16A34A]',
+      reputationBadgeBg: 'bg-[#90B823]/15 text-[#2E4A05] border border-[#90B823]/35',
+      scoreText: '8,9 / 10',
+      complaintsText: '7 reclamações recebidas · 6 resolvidas · 4 voltariam',
+      x: 855,
+      y: 60,
+    },
+  ] : [
     {
       id: '2026-04',
       monthShort: 'Abr',
@@ -129,8 +212,10 @@ export function SemesterEvolutionChart({ data }: { data: ReportConfig }) {
     }
   };
 
-  // Traçado exato da linha verde com conexão contínua suave passando exatamente pelos pontos
-  const curvePath = "M 80 155 C 140 165, 175 190, 230 190 C 285 190, 335 165, 390 155 C 445 145, 495 130, 550 120 C 605 110, 655 102, 710 95 C 765 88, 805 78, 855 75";
+  // Traçado exato da linha curva conectando os pontos
+  const curvePath = isNovare
+    ? "M 80 190 C 140 190, 175 190, 230 190 C 285 190, 335 65, 390 65 C 445 65, 495 65, 550 65 C 605 65, 655 65, 710 65 C 765 65, 805 62, 855 60"
+    : "M 80 155 C 140 165, 175 190, 230 190 C 285 190, 335 165, 390 155 C 445 145, 495 130, 550 120 C 605 110, 655 102, 710 95 C 765 88, 805 78, 855 75";
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
@@ -197,7 +282,7 @@ export function SemesterEvolutionChart({ data }: { data: ReportConfig }) {
                       onClick={() => setSelectedMonthId(p.id)}
                     >
                       {/* Halo decorativo no ponto de Setembro (mês atual apurado na imagem de referência) */}
-                      {p.reputationType === 'boa' && (
+                      {p.id === '2026-09' && (
                         <circle
                           cx={p.x}
                           cy={p.y}
@@ -210,7 +295,7 @@ export function SemesterEvolutionChart({ data }: { data: ReportConfig }) {
                       )}
 
                       {/* Anel de seleção suave quando o usuário seleciona qualquer outro mês */}
-                      {isSelected && p.reputationType !== 'boa' && (
+                      {isSelected && p.id !== '2026-09' && (
                         <circle
                           cx={p.x}
                           cy={p.y}

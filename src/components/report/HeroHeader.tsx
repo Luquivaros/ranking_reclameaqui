@@ -4,6 +4,10 @@ import { ShieldCheck, CheckCircle2, RotateCcw, Star, MessageSquare } from 'lucid
 
 export function HeroHeader({ data }: { data: ReportConfig }) {
   const sem = data.semester;
+  const isHighTier = sem.reputationScore >= 8.0;
+  const solutionRate = sem.evaluatedComplaints > 0 
+    ? ((sem.resolvedComplaints / sem.evaluatedComplaints) * 100).toFixed(1).replace('.', ',') 
+    : '0';
 
   return (
     <section id="visao-geral" className="relative pt-8 sm:pt-12 pb-10 sm:pb-14 border-b border-black/[0.08] bg-white">
@@ -42,7 +46,7 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
               </div>
 
               <p className="text-xs text-black/60 font-normal leading-relaxed pt-1">
-                Índice consolidado com 100% das demandas respondidas, 74,7% de índice de resolução nos chamados avaliados e 59,0% de intenção de novos negócios no período de 6 meses.
+                Índice consolidado com 100% das demandas respondidas, {solutionRate}% de índice de resolução nos chamados avaliados e {sem.wouldDoBusinessAgainRate.toFixed(1).replace('.', ',')}% de intenção de novos negócios no período de 6 meses.
               </p>
             </div>
 
@@ -71,7 +75,7 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#007636]" />
                 </div>
                 <span className="text-2xl sm:text-3xl font-bold text-black font-mono-numbers block">
-                  74,7%
+                  {solutionRate}%
                 </span>
                 <span className="text-[11px] text-[#007636] font-semibold block">
                   {sem.resolvedComplaints} de {sem.evaluatedComplaints} avaliadas
@@ -117,50 +121,91 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
             <div className="min-w-[660px] max-w-4xl mx-auto">
               {/* Grid Superior: Mascotes e Valores / Indicadores */}
               <div className="grid grid-cols-6 items-end">
-                {/* Col 1: Não recomend. (Vazio) */}
-                <div />
+                {isHighTier ? (
+                  <>
+                    {/* Para notas >= 8.0 (ex: Novare 8.9) */}
+                    <div />
+                    <div />
+                    <div />
+                    {/* Col 4: Bom */}
+                    <div className="flex flex-col items-center justify-end pb-1.5">
+                      <img
+                        src="/image/bom.png"
+                        alt="Bom"
+                        className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#2563EB] font-mono-numbers mt-1.5 tracking-tight">
+                        -0.9
+                      </span>
+                    </div>
 
-                {/* Col 2: Ruim (Vazio) */}
-                <div />
+                    {/* Col 5: Ótimo (8.9) - Destaque Atual */}
+                    <div className="relative flex flex-col items-center justify-end pb-1.5 bg-gradient-to-t from-emerald-100/70 via-emerald-50/40 to-transparent rounded-t-2xl pt-3">
+                      <img
+                        src="/image/otimo.png"
+                        alt="Ótimo - Reputação Atual 8.9"
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md scale-105"
+                      />
+                      <span className="text-2xl sm:text-3xl font-extrabold text-[#16A34A] font-mono-numbers mt-1 tracking-tight">
+                        {sem.reputationScore.toFixed(1)}
+                      </span>
+                    </div>
 
-                {/* Col 3: Regular (-0.4) */}
-                <div className="flex flex-col items-center justify-end pb-1.5">
-                  <img
-                    src="/image/regular.png"
-                    alt="Regular"
-                    className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
-                  />
-                  <span className="text-sm sm:text-base font-bold text-[#D97706] font-mono-numbers mt-1.5 tracking-tight">
-                    -0.4
-                  </span>
-                </div>
+                    {/* Col 6: RA1000 */}
+                    <div className="flex flex-col items-center justify-end pb-1.5">
+                      <img
+                        src="/image/ra1000.png"
+                        alt="RA1000"
+                        className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#84CC16] font-mono-numbers mt-1.5 tracking-tight">
+                        +1.1
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Para notas < 8.0 (ex: Nexus 7.3) */}
+                    <div />
+                    <div />
+                    {/* Col 3: Regular (-0.4) */}
+                    <div className="flex flex-col items-center justify-end pb-1.5">
+                      <img
+                        src="/image/regular.png"
+                        alt="Regular"
+                        className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#D97706] font-mono-numbers mt-1.5 tracking-tight">
+                        -0.4
+                      </span>
+                    </div>
 
-                {/* Col 4: Bom (7.3) - Situação Atual com Destaque Azul Sutil */}
-                <div className="relative flex flex-col items-center justify-end pb-1.5 bg-gradient-to-t from-blue-100/70 via-blue-50/40 to-transparent rounded-t-2xl pt-3">
-                  <img
-                    src="/image/bom.png"
-                    alt="Bom - Reputação Atual 7.3"
-                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md scale-105"
-                  />
-                  <span className="text-2xl sm:text-3xl font-extrabold text-[#1D4ED8] font-mono-numbers mt-1 tracking-tight">
-                    {sem.reputationScore.toFixed(1)}
-                  </span>
-                </div>
+                    {/* Col 4: Bom (7.3) - Situação Atual com Destaque Azul Sutil */}
+                    <div className="relative flex flex-col items-center justify-end pb-1.5 bg-gradient-to-t from-blue-100/70 via-blue-50/40 to-transparent rounded-t-2xl pt-3">
+                      <img
+                        src="/image/bom.png"
+                        alt="Bom - Reputação Atual 7.3"
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md scale-105"
+                      />
+                      <span className="text-2xl sm:text-3xl font-extrabold text-[#1D4ED8] font-mono-numbers mt-1 tracking-tight">
+                        {sem.reputationScore.toFixed(1)}
+                      </span>
+                    </div>
 
-                {/* Col 5: Ótimo (+0.7) */}
-                <div className="flex flex-col items-center justify-end pb-1.5">
-                  <img
-                    src="/image/otimo.png"
-                    alt="Ótimo"
-                    className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
-                  />
-                  <span className="text-sm sm:text-base font-bold text-[#16A34A] font-mono-numbers mt-1.5 tracking-tight">
-                    +0.7
-                  </span>
-                </div>
-
-                {/* Col 6: RA1000 (Vazio) */}
-                <div />
+                    {/* Col 5: Ótimo (+0.7) */}
+                    <div className="flex flex-col items-center justify-end pb-1.5">
+                      <img
+                        src="/image/otimo.png"
+                        alt="Ótimo"
+                        className="w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-xs"
+                      />
+                      <span className="text-sm sm:text-base font-bold text-[#16A34A] font-mono-numbers mt-1.5 tracking-tight">
+                        +0.7
+                      </span>
+                    </div>
+                    <div />
+                  </>
+                )}
               </div>
 
               {/* Barra de Reputação com 6 Segmentos e Extremidades Arredondadas */}

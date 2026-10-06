@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ReportConfig } from '../../types/report';
 import { initialReportData } from '../../data/defaultReportData';
-import { getReportData } from '../../services/reportService';
+import { getReportData, getCompanyDefaultData } from '../../services/reportService';
 import { ReportNavbar } from './ReportNavbar';
 import { HeroHeader } from './HeroHeader';
 import { MonthlySection } from './MonthlySection';
@@ -11,23 +11,31 @@ import { WebFooter } from './WebFooter';
 import { RevealOnScroll } from '../common/RevealOnScroll';
 
 interface ReportPageProps {
+  companyId?: 'nexus' | 'novare';
   onNavigateToRanking: () => void;
+  onNavigateToHub: () => void;
 }
 
-export function ReportPage({ onNavigateToRanking }: ReportPageProps) {
-  const [reportData, setReportData] = useState<ReportConfig>(initialReportData);
+export function ReportPage({ companyId = 'nexus', onNavigateToRanking, onNavigateToHub }: ReportPageProps) {
+  const [reportData, setReportData] = useState<ReportConfig>(() => getCompanyDefaultData(companyId));
   const [activeSection, setActiveSection] = useState('visao-geral');
   const [isLoadedFromDb, setIsLoadedFromDb] = useState(false);
 
   // Carregar dados atualizados do Supabase (com fallback local seguro)
   useEffect(() => {
+    let isCurrent = true;
+    setReportData(getCompanyDefaultData(companyId));
+
     async function loadData() {
-      const res = await getReportData();
-      setReportData(res.data);
-      setIsLoadedFromDb(res.fromDb);
+      const res = await getReportData(companyId);
+      if (isCurrent) {
+        setReportData(res.data);
+        setIsLoadedFromDb(res.fromDb);
+      }
     }
     loadData();
-  }, []);
+    return () => { isCurrent = false; };
+  }, [companyId]);
 
   // Monitorar seção ativa durante o scroll para a navbar
   useEffect(() => {
@@ -53,11 +61,13 @@ export function ReportPage({ onNavigateToRanking }: ReportPageProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col antialiased selection:bg-[#90B823] selection:text-black relative overflow-x-hidden">
-      {/* Barra de Navegação Oficial com botão de acesso ao Ranking */}
+    <div className="min-h-screen bg-white flex flex-col antialiased selection:bg-[#90B823] selection:text-black relative">
+      {/* Barra de Navegação Oficial com botão de acesso ao Ranking e Trocar Empresa */}
       <ReportNavbar 
+        data={reportData}
         activeSection={activeSection} 
         onNavigateToRanking={onNavigateToRanking} 
+        onNavigateToHub={onNavigateToHub}
       />
 
       {/* Conteúdo Principal do Relatório Executivo */}

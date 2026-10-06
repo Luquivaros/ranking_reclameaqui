@@ -1,38 +1,49 @@
 import { supabase } from '../lib/supabase';
 import { ReportConfig } from '../types/report';
 import { initialReportData } from '../data/defaultReportData';
+import { novareReportData } from '../data/novareReportData';
 
 export const DEFAULT_REPORT_ID = 'default';
 
+// Helper para obter dados padrão da empresa
+export function getCompanyDefaultData(companyId: string): ReportConfig {
+  if (companyId === 'novare') {
+    return novareReportData;
+  }
+  return initialReportData;
+}
+
 // Converter do formato do banco (snake_case) para ReportConfig (camelCase)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function fromReportDbRow(row: any): ReportConfig {
+function fromReportDbRow(row: any, fallback: ReportConfig): ReportConfig {
   const companyName = (!row.company_name || row.company_name === 'Diagnóstico Corporativo')
-    ? initialReportData.companyName
+    ? fallback.companyName
     : row.company_name;
 
   return {
+    companyId: row.company_id || fallback.companyId,
     companyName,
-    cnpj: row.cnpj || undefined,
-    segment: row.segment || initialReportData.segment,
-    reportDate: row.report_date || initialReportData.reportDate,
-    preparedBy: row.prepared_by || initialReportData.preparedBy,
-    semester: row.semester || initialReportData.semester,
-    monthly: row.monthly || initialReportData.monthly,
+    reclameAquiUrl: row.reclame_aqui_url || fallback.reclameAquiUrl,
+    cnpj: row.cnpj || fallback.cnpj,
+    segment: row.segment || fallback.segment,
+    reportDate: row.report_date || fallback.reportDate,
+    preparedBy: row.prepared_by || fallback.preparedBy,
+    semester: row.semester || fallback.semester,
+    monthly: row.monthly || fallback.monthly,
     monthlyHistory: Array.isArray(row.monthly_history) && row.monthly_history.length > 0 
       ? row.monthly_history 
-      : initialReportData.monthlyHistory,
+      : fallback.monthlyHistory,
     reasons: Array.isArray(row.reasons) && row.reasons.length > 0 
       ? row.reasons 
-      : initialReportData.reasons,
+      : fallback.reasons,
     totalReasonsCount: typeof row.total_reasons_count === 'number' 
       ? row.total_reasons_count 
-      : initialReportData.totalReasonsCount,
+      : fallback.totalReasonsCount,
   };
 }
 
 // Converter de ReportConfig para o formato do banco (snake_case)
-function toReportDbRow(config: ReportConfig, id: string = DEFAULT_REPORT_ID): Record<string, unknown> {
+function toReportDbRow(config: ReportConfig, id: string): Record<string, unknown> {
   const now = Date.now();
   return {
     id,
@@ -51,40 +62,41 @@ function toReportDbRow(config: ReportConfig, id: string = DEFAULT_REPORT_ID): Re
 }
 
 /**
- * Busca o relatório no Supabase. Caso o banco esteja vazio ou a tabela ainda não exista,
- * retorna os dados locais (initialReportData) com fallback seguro.
+ * Busca o relatório da empresa (Nexus ou Novare) no Supabase com fallback seguro.
  */
-export async function getReportData(): Promise<{ data: ReportConfig; fromDb: boolean; error: string | null }> {
+export async function getReportData(companyId: string = 'nexus'): Promise<{ data: ReportConfig; fromDb: boolean; error: string | null }> {
+  const fallback = getCompanyDefaultData(companyId);
+  const targetId = companyId === 'novare' ? 'novare' : DEFAULT_REPORT_ID;
+
   try {
     const { data, error } = await supabase
       .from('reports')
       .select('*')
-      .eq('id', DEFAULT_REPORT_ID)
+      .eq('id', targetId)
       .maybeSingle();
 
     if (error) {
-      // Se der erro (ex: tabela reports ainda não criada no Supabase), avisa no console e usa dados padrão
       console.warn('Supabase reports aviso (usando fallback local):', error.message);
-      return { data: initialReportData, fromDb: false, error: error.message };
+      return { data: fallback, fromDb: false, error: error.message };
     }
 
     if (data) {
-      return { data: fromReportDbRow(data), fromDb: true, error: null };
+      return { data: fromReportDbRow(data, fallback), fromDb: true, error: null };
     }
 
-    // Se a tabela existe mas o registro padrão ainda não foi inserido, tenta criar
+    // Se o registro não existe no banco, tenta persistir o padrão da empresa
     try {
-      const row = toReportDbRow(initialReportData, DEFAULT_REPORT_ID);
+      const row = toReportDbRow(fallback, targetId);
       await supabase.from('reports').insert({ ...row, created_at: Date.now() });
     } catch (insertErr) {
-      console.warn('Não foi possível inserir o relatório inicial no Supabase:', insertErr);
+      console.warn('Aviso ao inserir dados iniciais:', insertErr);
     }
 
-    return { data: initialReportData, fromDb: false, error: null };
+    return { data: fallback, fromDb: false, error: null };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Erro desconhecido ao carregar relatório';
-    console.error('Falha ao conectar com o Supabase reports:', err);
-    return { data: initialReportData, fromDb: false, error: msg };
+    const msg = err instanceof Error ? err.message : 'Erro ao carregar relatório';
+    console.error('Falha de conexão com Supabase:', err);
+    return { data: fallback, fromDb: false, error: msg };
   }
 }
 

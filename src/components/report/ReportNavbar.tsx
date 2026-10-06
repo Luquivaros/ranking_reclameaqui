@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Menu, X, ExternalLink } from 'lucide-react';
+import { Menu, X, ExternalLink, ArrowLeftRight } from 'lucide-react';
+import { ReportConfig } from '../../types/report';
 
 interface ReportNavbarProps {
+  data: ReportConfig;
   activeSection: string;
   onNavigateToRanking: () => void;
+  onNavigateToHub: () => void;
 }
 
-export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavbarProps) {
+export function ReportNavbar({ data, activeSection, onNavigateToRanking, onNavigateToHub }: ReportNavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const isNovare = data.companyName.toLowerCase().includes('novare');
+  const reclameAquiUrl = data.reclameAquiUrl || (isNovare
+    ? 'https://www.reclameaqui.com.br/empresa/novare-assessoria-administrativa/'
+    : 'https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/');
 
   const navLinks = [
     { id: 'visao-geral', label: 'Visão Geral' },
@@ -72,13 +80,23 @@ export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavba
             Ranking
           </button>
 
+          {/* Botão para trocar de empresa */}
+          <button
+            onClick={onNavigateToHub}
+            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer text-slate-700 bg-slate-100 hover:bg-slate-200 ml-0.5"
+            title="Voltar para a tela de seleção de empresa"
+          >
+            <ArrowLeftRight className="w-3 h-3 text-slate-500" />
+            <span>Trocar Empresa</span>
+          </button>
+
           {/* Botão para redirecionar para a página da empresa no Reclame AQUI */}
           <a
-            href="https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/"
+            href={reclameAquiUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#007636] text-white hover:bg-[#005e2b] transition-all shadow-xs cursor-pointer whitespace-nowrap ml-1.5"
-            title="Abrir página oficial da Nexus Soluções Financeiras no Reclame AQUI"
+            title={`Abrir página oficial da ${data.companyName} no Reclame AQUI`}
           >
             <span className="hidden xl:inline">Página no</span>
             <span>Reclame AQUI</span>
@@ -110,7 +128,7 @@ export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavba
             </button>
           ))}
 
-          {/* Botão Ranking no Menu Mobile com o mesmo design da lista */}
+          {/* Botão Ranking no Menu Mobile */}
           <button
             onClick={() => {
               setMobileMenuOpen(false);
@@ -122,10 +140,25 @@ export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavba
             <span className="text-[#007636] text-xs font-mono-numbers">→</span>
           </button>
 
+          {/* Botão Trocar Empresa no Menu Mobile */}
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onNavigateToHub();
+            }}
+            className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center justify-between cursor-pointer"
+          >
+            <span className="flex items-center gap-1.5">
+              <ArrowLeftRight className="w-3.5 h-3.5 text-slate-500" />
+              <span>Trocar Empresa (Início)</span>
+            </span>
+            <span className="text-slate-400 text-xs font-mono-numbers">⟲</span>
+          </button>
+
           {/* Botão para página no Reclame AQUI no Mobile */}
           <div className="pt-2 mt-1 border-t border-black/5">
             <a
-              href="https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/"
+              href={reclameAquiUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full text-left px-3 py-2 text-xs font-semibold text-white bg-[#007636] hover:bg-[#005e2b] rounded-lg flex items-center justify-between transition-colors shadow-xs"

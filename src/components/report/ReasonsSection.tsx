@@ -40,13 +40,15 @@ export function ReasonsSection({ data }: { data: ReportConfig }) {
         </div>
 
         {/* Pareto Insight Alert */}
-        <div className="p-5 rounded-xl border border-black/[0.08] bg-[#FAFAFA] flex items-start gap-3">
-          <AlertCircle className="w-4 h-4 text-[#007636] shrink-0 mt-0.5" />
-          <div className="text-xs text-black/75 leading-relaxed font-normal">
-            <strong className="font-semibold text-black">Concentração Prioritária de Chamados: </strong>
-            Os motivos <strong>Cobrança indevida (7 ocorrências · 31,82%)</strong> e <strong>Ligações excessivas (6 ocorrências · 27,27%)</strong> respondem conjuntamente por <strong>59,09%</strong> de todas as queixas registradas. Ações preventivas focadas nessas duas vertentes reduzirão mais da metade da volumetria no Reclame AQUI.
+        {reasons.length >= 2 && (
+          <div className="p-5 rounded-xl border border-black/[0.08] bg-[#FAFAFA] flex items-start gap-3">
+            <AlertCircle className="w-4 h-4 text-[#007636] shrink-0 mt-0.5" />
+            <div className="text-xs text-black/75 leading-relaxed font-normal">
+              <strong className="font-semibold text-black">Concentração Prioritária de Chamados: </strong>
+              Os motivos <strong>{reasons[0].reason} ({reasons[0].count} ocorrências · {reasons[0].percentageFormatted})</strong> e <strong>{reasons[1].reason} ({reasons[1].count} ocorrências · {reasons[1].percentageFormatted})</strong> respondem conjuntamente por <strong>{(reasons[0].percentage + reasons[1].percentage).toFixed(2).replace('.', ',')}%</strong> de todas as queixas registradas. Ações preventivas focadas nessas vertentes reduzem substancialmente a volumetria no Reclame AQUI.
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Desktop & Tablet Table View */}
         <div className="hidden sm:block overflow-hidden rounded-xl border border-black/[0.08] bg-white shadow-2xs">

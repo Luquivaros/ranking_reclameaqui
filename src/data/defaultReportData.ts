@@ -183,7 +183,9 @@ export const officialReasonsData: ComplaintReason[] = [
 ];
 
 export const initialReportData: ReportConfig = {
+  companyId: "nexus",
   companyName: "Nexus Soluções Financeiras",
+  reclameAquiUrl: "https://www.reclameaqui.com.br/empresa/nexus-solucoes-financeiras/",
   cnpj: "12.345.678/0001-90",
   segment: "Serviços ao Consumidor",
   reportDate: "30 de Setembro de 2026",

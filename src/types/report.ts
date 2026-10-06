@@ -54,7 +54,9 @@ export interface ComplaintReason {
 }
 
 export interface ReportConfig {
+  companyId?: string;
   companyName: string;
+  reclameAquiUrl?: string;
   cnpj?: string;
   segment: string;
   reportDate: string;

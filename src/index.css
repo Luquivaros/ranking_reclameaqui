@@ -10,6 +10,13 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  body {
+    overflow-x: hidden;
+    min-height: 100vh;
   }
 }
 
