@@ -206,34 +206,37 @@ export function LeaderboardRankings({
       </div>
 
       {/* Pagination Bar */}
-      <div className="border-t border-slate-100 bg-slate-50/40 px-4 py-2.5 flex items-center justify-between text-xs text-slate-500">
-        {/* Page size select */}
-        <div className="flex items-center gap-1.5">
-          <span>Exibir</span>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value))
-              setCurrentPage(1)
-            }}
-            className="bg-white border border-slate-200 rounded-md px-2 py-0.5 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 font-medium cursor-pointer"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={15}>15</option>
-            <option value={20}>20</option>
-            <option value={0}>Todas ({rankings.length})</option>
-          </select>
+      {pageSize === 0 ? (
+        <div className="border-t border-slate-100 bg-slate-50/40 px-4 py-2.5 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span>Todas as {rankings.length} empresas listadas</span>
+          <span className="font-semibold text-slate-700">1º ao {rankings.length}º lugar</span>
         </div>
+      ) : (
+        <div className="border-t border-slate-100 bg-slate-50/40 px-4 py-2.5 flex items-center justify-between text-xs text-slate-500">
+          {/* Page size select */}
+          <div className="flex items-center gap-1.5">
+            <span>Exibir</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value))
+                setCurrentPage(1)
+              }}
+              className="bg-white border border-slate-200 rounded-md px-2 py-0.5 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 font-medium cursor-pointer"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={20}>20</option>
+              <option value={0}>Todas ({rankings.length})</option>
+            </select>
+          </div>
 
-        {/* Navigation */}
-        <div className="flex items-center gap-2">
-          <span>
-            {pageSize === 0
-              ? `Todas as ${rankings.length} empresas`
-              : `Página ${currentPage} de ${totalPages}`}
-          </span>
-          {pageSize !== 0 && (
+          {/* Navigation */}
+          <div className="flex items-center gap-2">
+            <span>
+              {`Página ${currentPage} de ${totalPages}`}
+            </span>
             <div className="flex items-center gap-1">
               <button
                 type="button"
@@ -264,9 +267,9 @@ export function LeaderboardRankings({
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

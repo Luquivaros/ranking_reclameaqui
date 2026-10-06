@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --ra-lime: #90B823;
+    --ra-forest: #007636;
+    --ra-black: #000000;
+    --ra-white: #FFFFFF;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.font-brand {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.font-mono-numbers {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.border-hairline {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
 @layer utilities {
   /* Studded rubber background texture from the photo */
   .bg-rubber-mat {
