@@ -27,7 +27,7 @@ export function ReportNavbar({ activeSection, onNavigateToRanking }: ReportNavba
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-black/[0.08]">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-black/[0.08] animate-fade-in-down">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 sm:h-28 flex items-center justify-between gap-4">
         {/* Brand Zone com a logo oficial do Reclame Aqui e o nome da empresa */}
         <div 

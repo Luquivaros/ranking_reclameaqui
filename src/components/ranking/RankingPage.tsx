@@ -329,7 +329,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
   return (
     <div className="min-h-screen bg-[#f4f5f7] py-6 px-3 sm:px-6 font-sans text-slate-900 flex flex-col justify-between">
       {/* Botão de retorno ao Relatório Principal */}
-      <div className="max-w-lg mx-auto w-full mb-3 flex items-center justify-start">
+      <div className="max-w-lg mx-auto w-full mb-3 flex items-center justify-start animate-fade-in-down">
         <button
           onClick={onNavigateToReport}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 text-xs font-semibold text-slate-700 hover:text-black hover:bg-slate-50 shadow-2xs transition-all cursor-pointer group"
@@ -346,7 +346,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
         </div>
       )}
 
-      <header className="max-w-lg mx-auto w-full mb-4">
+      <header className="max-w-lg mx-auto w-full mb-4 animate-fade-in-down stagger-1">
         <div className="flex items-center justify-between gap-2 bg-white/95 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-2.5 px-3.5 shadow-xs">
           {/* Brand Info */}
           <div className="flex items-center gap-2.5">
@@ -389,7 +389,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
       </header>
 
       {/* Main Leaderboard Card - Exibindo todas as 34 empresas sem necessidade de filtrar */}
-      <main className="flex-1 flex flex-col items-center justify-start">
+      <main className="flex-1 flex flex-col items-center justify-start animate-fade-in-up stagger-2">
         <LeaderboardCard
           title="Ranking Geral de Reputação"
           subtitle="Critério oficial de ordenação do Reclame Aqui"
@@ -467,7 +467,7 @@ export function RankingPage({ onNavigateToReport }: RankingPageProps) {
       )}
 
       {/* Footer Info */}
-      <footer className="max-w-lg mx-auto w-full text-center text-[10px] text-slate-600 mt-4 flex items-center justify-between px-2">
+      <footer className="max-w-lg mx-auto w-full text-center text-[10px] text-slate-600 mt-4 flex items-center justify-between px-2 animate-fade-in stagger-3">
         <div className="flex items-center gap-1.5">
           <Building2 className="w-3.5 h-3.5 text-slate-600" />
           <span>Grupo UOP • Monitoramento Oficial</span>

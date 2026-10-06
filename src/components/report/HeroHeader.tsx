@@ -9,7 +9,7 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
     <section id="visao-geral" className="relative pt-8 sm:pt-12 pb-10 sm:pb-14 border-b border-black/[0.08] bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Company Title & Statement */}
-        <div className="space-y-2.5">
+        <div className="space-y-2.5 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#007636]/5 border border-[#007636]/20 text-[#007636] text-xs font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Monitoramento de Satisfação & Atendimento</span>
@@ -23,7 +23,7 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
         </div>
 
         {/* Executive Reputation Hero Anchor Card */}
-        <div className="rounded-2xl border border-black/[0.08] bg-[#FAFAFA] p-6 sm:p-8 shadow-xs">
+        <div className="rounded-2xl border border-black/[0.08] bg-[#FAFAFA] p-6 sm:p-8 shadow-xs animate-fade-in-up stagger-2">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Score Presentation */}
             <div className="lg:col-span-5 space-y-3 border-b lg:border-b-0 lg:border-r border-black/[0.08] pb-6 lg:pb-0 lg:pr-8">
@@ -112,7 +112,7 @@ export function HeroHeader({ data }: { data: ReportConfig }) {
         </div>
 
         {/* Linha do Tempo / Régua Oficial de Reputação Reclame AQUI (Fiel à imagem de referência) */}
-        <div className="rounded-2xl border border-black/[0.08] bg-white p-6 sm:p-8 shadow-xs">
+        <div className="rounded-2xl border border-black/[0.08] bg-white p-6 sm:p-8 shadow-xs animate-fade-in-up stagger-3">
           <div className="overflow-x-auto select-none pt-2 pb-2">
             <div className="min-w-[660px] max-w-4xl mx-auto">
               {/* Grid Superior: Mascotes e Valores / Indicadores */}

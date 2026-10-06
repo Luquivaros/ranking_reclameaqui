@@ -7,8 +7,12 @@ export const DEFAULT_REPORT_ID = 'default';
 // Converter do formato do banco (snake_case) para ReportConfig (camelCase)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function fromReportDbRow(row: any): ReportConfig {
+  const companyName = (!row.company_name || row.company_name === 'Diagnóstico Corporativo')
+    ? initialReportData.companyName
+    : row.company_name;
+
   return {
-    companyName: row.company_name || initialReportData.companyName,
+    companyName,
     cnpj: row.cnpj || undefined,
     segment: row.segment || initialReportData.segment,
     reportDate: row.report_date || initialReportData.reportDate,

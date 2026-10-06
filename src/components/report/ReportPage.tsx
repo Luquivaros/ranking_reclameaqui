@@ -8,6 +8,7 @@ import { MonthlySection } from './MonthlySection';
 import { SemesterSection } from './SemesterSection';
 import { ReasonsSection } from './ReasonsSection';
 import { WebFooter } from './WebFooter';
+import { RevealOnScroll } from '../common/RevealOnScroll';
 
 interface ReportPageProps {
   onNavigateToRanking: () => void;
@@ -61,21 +62,29 @@ export function ReportPage({ onNavigateToRanking }: ReportPageProps) {
 
       {/* Conteúdo Principal do Relatório Executivo */}
       <main className="relative z-10 flex-1 flex flex-col">
-        {/* 1. Visão Geral Executiva e Nota do Ciclo */}
+        {/* 1. Visão Geral Executiva e Nota do Ciclo (anima imediatamente na montagem) */}
         <HeroHeader data={reportData} />
 
         {/* 2. Análise Mensal Individual (Setembro / 2026 com seletor de histórico) */}
-        <MonthlySection data={reportData} />
+        <RevealOnScroll>
+          <MonthlySection data={reportData} />
+        </RevealOnScroll>
 
         {/* 3. Análise Semestral Consolidada (180 dias + Gráfico de Evolução) */}
-        <SemesterSection data={reportData} />
+        <RevealOnScroll>
+          <SemesterSection data={reportData} />
+        </RevealOnScroll>
 
         {/* 4. Principais Motivos das Reclamações (Tabela interativa e pesquisa) */}
-        <ReasonsSection data={reportData} />
+        <RevealOnScroll>
+          <ReasonsSection data={reportData} />
+        </RevealOnScroll>
       </main>
 
       {/* Rodapé Executivo */}
-      <WebFooter />
+      <RevealOnScroll>
+        <WebFooter />
+      </RevealOnScroll>
     </div>
   );
 }
